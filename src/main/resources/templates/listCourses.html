@@ -1,0 +1,132 @@
+<div xmlns:th="http://www.thymeleaf.org">
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Courses List</h1>
+    </div>
+</section>
+
+<div th:if="${hasError}">
+    <h5 class="text-center text-danger" th:text="${error}"></h5>
+</div>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-md-5">
+            <form action="/courses" method="GET">
+                <div class="form-group">
+                    <label>Type:</label>
+                    <select name="type" class="form-control">
+                        <option th:each="type : ${T(mk.ukim.finki.wp.lab.model.enumerations.CourseType).values()}"
+                                th:value="${type}"
+                                th:text="${type}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Select</button>
+            </form>
+            <div class="row">
+                <div class="col-md-5">
+                    <form action="/courses" method="GET">
+                        <label for='text'>Search course:</label><input id='text' type='text' name='text'/>
+                        <input id="search" type="submit" value="Search"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col mb-4">
+            <div class="row">
+                <div class="col-sm-2 col-md-2">
+                    <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                        <a href="/courses/add-form" class="btn btn-block btn-dark add-course">Add new course</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="main">
+            <h2>Choose course:</h2>
+            <form th:action="@{/listCourses}" th:method="POST">
+                <div class="col-8">
+                    <ul style="list-style-type:none;">
+                        <li th:each="course: ${courses}">
+                            <input type="radio" required th:name="courseId" th:value="${course.getCourseId()}" />
+                            <label th:text="${course.getName()}"></label>
+                        </li>
+                    </ul>
+                </div>
+                <br/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+        <div class="side">
+            <div class="table-responsive">
+                <table class="table borderless top">
+                    <tbody>
+                    <tr th:each="course : ${courses}" class="course">
+                        <td class="text-right">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <form th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}" th:method="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash">Delete</i></button>
+                                </form>
+                            </th:block>
+                        </td>
+                        <td>
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}"
+                                   class="btn btn-sm btn-info"><i class="fa fa-trash">Edit</i></a>
+                            </th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12" th:if="${courses.size() > 0}">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Course name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Teacher</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="course : ${courses}">
+                        <td th:text="${course.getName()}"></td>
+                        <td th:text="${course.getDescription()}"></td>
+                        <td th:text="${course.getTeacher() != null}
+                            ? ${course.getTeacher().getName() + ' ' + course.getTeacher().getSurname()} : 'No Teacher'"></td>
+                        <td class="text-right">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <form th:action="@{'/courses/delete/{id}' (id=${course.getCourseId()})}" th:method="DELETE">
+                                    <button type="submit" class="btn btn-sm btn-danger delete-course"><i class="fa fa-trash">Delete</i></button>
+                                </form>
+                            </th:block>
+                        </td>
+                        <td>
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <a th:href="@{'/courses/edit-form/{id}' (id=${course.getCourseId()})}"
+                                   class="btn btn-sm btn-info edit-course"><i class="fa fa-trash">Edit</i></a>
+                            </th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

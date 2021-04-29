@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add new Student to Course</title>
+    <style type = "text/css">
+        body {
+            width: 800px;
+            margin: auto;
+        }
+        table {
+            width:100%;
+        }
+        table, td, th {
+            border: 1px solid black;
+            padding:3px 2px;
+        }
+        section {
+            float: left;
+            margin: 0 1.5%;
+            width: 63%;
+        }
+        aside {
+            float: right;
+            margin: 0 1.5%;
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Student Enrollment - Select the Student </h1>
+</header>
+<section>
+    <h2>Select the student to enroll:</h2>
+    <a href='/createStudent' type='button'>Create New Student</a> <br/> <br/>
+
+    <form th:action="@{/listSearchedStudent}" th:method="POST">
+        <label for='text'>Name or surname:</label><input id='text' type='text' name='text'/>
+        <input type="submit" value="Search"/>
+    </form>
+
+    <form th:action="@{/AddStudent}" th:method="POST">
+        <ul style="list-style-type:none;">
+            <li th:each="student: ${students}">
+                <input type="radio" th:name="size" th:value="${student.username}" />
+                <label th:text="${student.name + ' ' + student.surname}"></label>
+            </li>
+        </ul>
+        <br/>
+        <label for='grade'>Grade:</label><input id='grade' type='text' name='grade'/>
+        <div th:if="${hasError}" style="color:red">
+            <div th:text="${error}"></div>
+        </div>
+        <br/>
+        <input type="submit" value="Submit"/>
+    </form>
+</section>
+<aside>
+    <table>
+        <tr>
+            <th colspan="2">
+                Your Enrollment Status
+            </th>
+        </tr>
+        <tr>
+            <td><b>Course Id</b></td>
+            <td th:text="${session.courseId}"></td>
+        </tr>
+    </table>
+</aside>
+
+</body>
+</html>
